@@ -104,36 +104,36 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@luzid/grpc-client@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@luzid/grpc-client/-/grpc-client-0.0.0.tgz#a5b100638769307a043950907941bb754c84da75"
-  integrity sha512-Ir3WH+fx4UTSXuDqX8cCNfZUd7P+d66bDo9mAP7N5np6PMuw+lFhm4dn7zFtugKM7St84m+TSbFEgR1Dx01zYg==
+"@luzid/grpc-client@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@luzid/grpc-client/-/grpc-client-0.0.1.tgz#5b4080fea7e6ba4b3fc19a68d52be9736bda6f61"
+  integrity sha512-QhAZcp/zxYmfPSDgLZT4cMgU1NORYH80kKX0GYevawIo6IL2gXVzQv6yhn8DUcnbChTkxMm4QjyjVxjrve+KJQ==
   dependencies:
-    "@luzid/grpc" "^0.0.0"
-    "@luzid/grpc-connection" "^0.0.0"
+    "@luzid/grpc" "^0.0.1"
+    "@luzid/grpc-connection" "^0.0.1"
 
-"@luzid/grpc-connection@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@luzid/grpc-connection/-/grpc-connection-0.0.0.tgz#be86436ab07736c842b2db0b7d8ce6be1366fa0c"
-  integrity sha512-jg6xJ1zDyODjDt/OChY1v1fdrRTqA7Q9IACWgvNAoICUMDidK8lZP4q4IyjcoUIw1fkTkFxrrfS7rH8esL2ewg==
+"@luzid/grpc-connection@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@luzid/grpc-connection/-/grpc-connection-0.0.1.tgz#74f92fb5e41adb0bc00083e8f963e44a5dafc877"
+  integrity sha512-KtAnpDRW0h+GNXFT39UQ4v3ugMPoWNLaDhEDjaPg4b7nPBPrKtwaRDXx0VdT1TzYrv3qMI8I5frB4ZCgW+jbfw==
   dependencies:
     nice-grpc "^2.1.7"
     nice-grpc-web "^3.3.2"
 
-"@luzid/grpc@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@luzid/grpc/-/grpc-0.0.0.tgz#b5b175d2b3ed628d6f06a5da1b4efedb768d6ab3"
-  integrity sha512-QwT74XcbKBGdMBjdGmMtCYskQclERkiJneZclQUhDp83/eT1SmGqr2egnv4Un70ruNytAolIcCP6byrt60Q2tw==
+"@luzid/grpc@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@luzid/grpc/-/grpc-0.0.1.tgz#cbdb2c3ca63d6964ca6b1ade1f5fb8e0efe6c910"
+  integrity sha512-ZV8FvdoR3cphXmzCTJceARVS5cMTUOM2/JeJCCTfiHsG6IyRnxQaw3pmOzxwXLZTF6B08jjZG5q3h2nUF3HQRw==
   dependencies:
     long "^5.2.3"
 
-"@luzid/sdk@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@luzid/sdk/-/sdk-0.0.0.tgz#fad752c55c68c32c30aa8074d5cd2c13a324cd99"
-  integrity sha512-dwYH+rd6bbNZBtoMLoaMzlDzy5nMD2acAkbl49+wA3GFhFkxSdo0SODHD4SGh0NgnQGFJQxybCk0U0PG/WEJLg==
+"@luzid/sdk@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@luzid/sdk/-/sdk-0.0.1.tgz#57d921cc8560e47e1d0345e871f72eb11b8ee201"
+  integrity sha512-dDHo6XsJTEp2DV/OFyCSyesHoLmaj3ikDSYBq+Rzbj5fQMATx18Pg7K3VUpU3qvFOiZmQFTzx9Vp1FN42EwKmQ==
   dependencies:
-    "@luzid/grpc" "^0.0.0"
-    "@luzid/grpc-client" "^0.0.0"
+    "@luzid/grpc" "^0.0.1"
+    "@luzid/grpc-client" "^0.0.1"
 
 "@next/env@14.1.0":
   version "14.1.0"
