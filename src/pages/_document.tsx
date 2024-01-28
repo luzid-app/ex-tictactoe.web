@@ -8,7 +8,7 @@ export default function Document() {
           name="description"
           content="Luzid: Solana Development at Light Speed Example"
         />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/ex-tictactoe.web/favicon.ico" />
       </Head>
       <body>
         <Main />
