@@ -1,6 +1,6 @@
 import Button from '@/components/button'
 import { Inter } from 'next/font/google'
-import { Cluster, LuzidSdk } from '@luzid/sdk'
+import { Cluster } from '@luzid/sdk'
 import * as anchor from '@coral-xyz/anchor'
 import * as web3 from '@solana/web3.js'
 import { useEffect, useState } from 'react'
@@ -28,7 +28,6 @@ const playerOne = web3.Keypair.generate()
 const playerTwo = web3.Keypair.generate()
 
 // Connections and Providers
-const luzid = new LuzidSdk()
 const conn = new web3.Connection(Cluster.Development.apiUrl, 'confirmed')
 
 const wallet = new BrowserWallet(playerOne)
@@ -43,7 +42,7 @@ const program = new anchor.Program(
 )
 
 const gameWeb3 = new GameWeb3(program, conn, gameKeypair, playerOne, playerTwo)
-const gameLuzid = new GameLuzid(luzid, conn, gameKeypair, playerOne, playerTwo)
+const gameLuzid = new GameLuzid(conn, gameKeypair, playerOne, playerTwo)
 
 export default function Home() {
   const [gameState, setGameState] = useState<GameState | null>(null)
@@ -98,20 +97,57 @@ export default function Home() {
       {/*-- Game */}
       <div className="flex">
         {/*
+            Game: Web3 Actions
+        */}
+        <div className="flex-auto dark:text-white max-w-sm p-6 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+          <h3>Web3 Actions</h3>
+          <Button
+            onClick={async () => {
+              const signature = await gameWeb3.fundAccount(playerOne.publicKey)
+              await gameLuzid.labelTransaction(signature, 'Fund Player One')
+
+              await updateFunds()
+              toast('Player Funded')
+            }}
+          >
+            1. Fund Main Player
+          </Button>
+          <Button
+            onClick={async () => {
+              const { signature, gameState } = await gameWeb3.setupGame()
+              gameLuzid.labelTransaction(
+                signature,
+                `Create Game: ${gameKeypair.publicKey.toString()}`
+              )
+              setGameState(gameState)
+              await updateFunds()
+
+              toast('Game Created')
+            }}
+          >
+            2. Create Game
+          </Button>
+        </div>
+        {/*
+            Game: Game State and TicTacToe Board
+        */}
+        <div className="flex-initial w-44 dark:text-white max-w-sm p-6 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+          <h3>Game State</h3>
+
+          <Board
+            board={gameState?.board ?? [[], [], []]}
+            onPlay={handlePlay}
+            state={gameState?.state}
+            nextPlayer={currentPlayer === playerOne ? 'X' : 'O'}
+          />
+        </div>
+
+        {/*
             Game: Luzid Actions
         */}
 
         <div className="flex-auto dark:text-white max-w-sm p-6 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
           <h3>Luzid Actions</h3>
-
-          <Button
-            onClick={async () => {
-              await gameLuzid.cloneTictactoeProgram()
-              toast('TicTacToe Program Cloned')
-            }}
-          >
-            1. Clone Program
-          </Button>
           <Button
             onClick={async () => {
               const snapshotId = await gameLuzid.restoreLastUpdatedSnapshot()
@@ -156,61 +192,6 @@ export default function Home() {
             }}
           >
             Remove App Snapshots
-          </Button>
-          <Button
-            onClick={async () => {
-              const version = await gameLuzid.restartValidator()
-              toast(`Validator Restarted: ${version['solana-core']}`)
-            }}
-          >
-            Restart Validator
-          </Button>
-        </div>
-        {/*
-            Game: Game State and TicTacToe Board
-        */}
-        <div className="flex-initial w-44 dark:text-white max-w-sm p-6 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-          <h3>Game State</h3>
-
-          <Board
-            board={gameState?.board ?? [[], [], []]}
-            onPlay={handlePlay}
-            state={gameState?.state}
-            nextPlayer={currentPlayer === playerOne ? 'X' : 'O'}
-          />
-        </div>
-
-        {/*
-            Game: Web3 Actions
-        */}
-
-        <div className="flex-auto dark:text-white max-w-sm p-6 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-          <h3>Web3 Actions</h3>
-          <Button
-            onClick={async () => {
-              const signature = await gameWeb3.fundAccount(playerOne.publicKey)
-              gameLuzid.labelTransaction(signature, 'Fund Player One')
-
-              await updateFunds()
-              toast('Player Funded')
-            }}
-          >
-            2. Fund Main Player
-          </Button>
-          <Button
-            onClick={async () => {
-              const { signature, gameState } = await gameWeb3.setupGame()
-              gameLuzid.labelTransaction(
-                signature,
-                `Create Game: ${gameKeypair.publicKey.toString()}`
-              )
-              setGameState(gameState)
-              await updateFunds()
-
-              toast('Game Created')
-            }}
-          >
-            3. Create Game
           </Button>
         </div>
       </div>
