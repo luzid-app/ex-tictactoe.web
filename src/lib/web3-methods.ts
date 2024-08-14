@@ -63,8 +63,7 @@ export class GameWeb3 {
       .signers([this.gameKeypair])
       .rpc()
 
-    const gameState = await this.fetchGameState()
-    return { signature, gameState }
+    return { signature }
   }
 
   async play(
@@ -81,8 +80,7 @@ export class GameWeb3 {
       .signers([player])
       .rpc()
 
-    const gameState = await this.fetchGameState()
-    return { signature, gameState }
+    return { signature }
   }
 
   async getAccountFunds(pubkey: web3.PublicKey) {
