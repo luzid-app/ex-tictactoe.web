@@ -83,7 +83,7 @@ export class GameWeb3 {
     player: web3.Keypair,
     row: number,
     col: number
-  ): Promise<{ signature: string; gameState: GameState }> {
+  ): Promise<{ signature: string }> {
     const signature = await this.program.methods
       .play({ row, column: col })
       .accounts({
