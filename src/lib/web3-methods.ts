@@ -23,6 +23,30 @@ export class GameWeb3 {
     return signature
   }
 
+  subscribeGameState(onChange: (gameState: GameState) => void): () => void {
+    const subscriptionId = this.conn.onProgramAccountChange(
+      this.program.programId,
+      async (info) => {
+        if (info.accountId.equals(this.gameKeypair.publicKey)) {
+          if (
+            info.accountInfo.data !== null &&
+            info.accountInfo.data.length > 0
+          ) {
+            const gameState = this.program.coder.accounts.decode(
+              'Game',
+              info.accountInfo.data
+            ) as GameState
+            onChange(gameState)
+          }
+        }
+      }
+    )
+
+    return () => {
+      this.conn.removeProgramAccountChangeListener(subscriptionId)
+    }
+  }
+
   async fetchGameState(): Promise<GameState> {
     return this.program.account.game.fetch(
       this.gameKeypair.publicKey

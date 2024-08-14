@@ -60,6 +60,11 @@ export default function Home() {
     setIsClient(true)
   }, [])
 
+  useEffect(() => {
+    const unsubscribe = gameWeb3.subscribeGameState(setGameState)
+    return unsubscribe
+  }, [])
+
   if (!isClient) {
     return null
   }
