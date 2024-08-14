@@ -60,35 +60,27 @@ export default function Home() {
     setIsClient(true)
   }, [])
 
+  useEffect(() => gameWeb3.subscribeGameState(setGameState), [])
+  useEffect(() =>
+    gameWeb3.subscribeLamportsChange(gameKeypair.publicKey, setGameFunds)
+  )
+  useEffect(() =>
+    gameWeb3.subscribeLamportsChange(playerOne.publicKey, setPlayerOneFunds)
+  )
+
   if (!isClient) {
     return null
-  }
-
-  async function updateFunds() {
-    const gameFunds = await gameWeb3.getAccountFunds(gameKeypair.publicKey)
-    setGameFunds(gameFunds)
-    const playerOneFunds = await gameWeb3.getAccountFunds(playerOne.publicKey)
-    setPlayerOneFunds(playerOneFunds)
   }
 
   async function handlePlay(row: number, col: number) {
     await gameLuzid.takeSnapshot()
 
-    const { signature, gameState } = await gameWeb3.play(
-      currentPlayer,
-      row,
-      col
-    )
+    const { signature } = await gameWeb3.play(currentPlayer, row, col)
     const piece = currentPlayer === playerOne ? 'X' : 'O'
     gameLuzid.labelTransaction(signature, `Place ${piece} at (${row}, ${col})`)
 
-    console.log(JSON.stringify(gameState, null, 2))
-    setGameState(gameState)
-
     const nextPlayer = currentPlayer === playerOne ? playerTwo : playerOne
     setCurrentPlayer(nextPlayer)
-
-    await updateFunds()
   }
   return (
     <main
@@ -106,7 +98,6 @@ export default function Home() {
               const signature = await gameWeb3.fundAccount(playerOne.publicKey)
               await gameLuzid.labelTransaction(signature, 'Fund Player One')
 
-              await updateFunds()
               toast('Player Funded')
             }}
           >
@@ -114,13 +105,11 @@ export default function Home() {
           </Button>
           <Button
             onClick={async () => {
-              const { signature, gameState } = await gameWeb3.setupGame()
+              const { signature } = await gameWeb3.setupGame()
               gameLuzid.labelTransaction(
                 signature,
                 `Create Game: ${gameKeypair.publicKey.toString()}`
               )
-              setGameState(gameState)
-              await updateFunds()
 
               toast('Game Created')
             }}
@@ -153,10 +142,6 @@ export default function Home() {
               const snapshotId = await gameLuzid.restoreLastUpdatedSnapshot()
               console.log('Restored Snapshot:', snapshotId)
 
-              const gameState = await gameWeb3.fetchGameState()
-              setGameState(gameState)
-              await updateFunds()
-
               toast('Snapshot Restored')
             }}
           >
@@ -166,18 +151,12 @@ export default function Home() {
             onClick={async () => {
               // 1. Modify
               {
+                // Ensure we got the latest game state
                 const gameState = await gameWeb3.fetchGameState()
                 await gameLuzid.modifyGameState(program, {
                   ...gameState,
                   ...O_WINNING,
                 } as unknown as GameState)
-              }
-              // 2. Fetch modified game
-              {
-                const gameState = await gameWeb3.fetchGameState()
-                setGameState(gameState)
-
-                await updateFunds()
               }
 
               toast('Game State Updated')

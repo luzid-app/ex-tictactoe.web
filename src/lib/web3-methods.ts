@@ -23,6 +23,43 @@ export class GameWeb3 {
     return signature
   }
 
+  subscribeLamportsChange(
+    pubkey: web3.PublicKey,
+    onChange: (lamports: number) => void
+  ): () => void {
+    const subscriptionId = this.conn.onAccountChange(pubkey, async (info) => {
+      onChange(info.lamports)
+    })
+
+    return () => {
+      this.conn.removeAccountChangeListener(subscriptionId)
+    }
+  }
+
+  subscribeGameState(onChange: (gameState: GameState) => void): () => void {
+    const subscriptionId = this.conn.onProgramAccountChange(
+      this.program.programId,
+      async (info) => {
+        if (info.accountId.equals(this.gameKeypair.publicKey)) {
+          if (
+            info.accountInfo.data !== null &&
+            info.accountInfo.data.length > 0
+          ) {
+            const gameState = this.program.coder.accounts.decode(
+              'Game',
+              info.accountInfo.data
+            ) as GameState
+            onChange(gameState)
+          }
+        }
+      }
+    )
+
+    return () => {
+      this.conn.removeProgramAccountChangeListener(subscriptionId)
+    }
+  }
+
   async fetchGameState(): Promise<GameState> {
     return this.program.account.game.fetch(
       this.gameKeypair.publicKey
@@ -39,8 +76,7 @@ export class GameWeb3 {
       .signers([this.gameKeypair])
       .rpc()
 
-    const gameState = await this.fetchGameState()
-    return { signature, gameState }
+    return { signature }
   }
 
   async play(
@@ -57,8 +93,7 @@ export class GameWeb3 {
       .signers([player])
       .rpc()
 
-    const gameState = await this.fetchGameState()
-    return { signature, gameState }
+    return { signature }
   }
 
   async getAccountFunds(pubkey: web3.PublicKey) {
