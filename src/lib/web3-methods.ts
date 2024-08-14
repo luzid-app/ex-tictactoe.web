@@ -23,6 +23,19 @@ export class GameWeb3 {
     return signature
   }
 
+  subscribeLamportsChange(
+    pubkey: web3.PublicKey,
+    onChange: (lamports: number) => void
+  ): () => void {
+    const subscriptionId = this.conn.onAccountChange(pubkey, async (info) => {
+      onChange(info.lamports)
+    })
+
+    return () => {
+      this.conn.removeAccountChangeListener(subscriptionId)
+    }
+  }
+
   subscribeGameState(onChange: (gameState: GameState) => void): () => void {
     const subscriptionId = this.conn.onProgramAccountChange(
       this.program.programId,

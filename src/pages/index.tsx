@@ -60,20 +60,16 @@ export default function Home() {
     setIsClient(true)
   }, [])
 
-  useEffect(() => {
-    const unsubscribe = gameWeb3.subscribeGameState(setGameState)
-    return unsubscribe
-  }, [])
+  useEffect(() => gameWeb3.subscribeGameState(setGameState), [])
+  useEffect(() =>
+    gameWeb3.subscribeLamportsChange(gameKeypair.publicKey, setGameFunds)
+  )
+  useEffect(() =>
+    gameWeb3.subscribeLamportsChange(playerOne.publicKey, setPlayerOneFunds)
+  )
 
   if (!isClient) {
     return null
-  }
-
-  async function updateFunds() {
-    const gameFunds = await gameWeb3.getAccountFunds(gameKeypair.publicKey)
-    setGameFunds(gameFunds)
-    const playerOneFunds = await gameWeb3.getAccountFunds(playerOne.publicKey)
-    setPlayerOneFunds(playerOneFunds)
   }
 
   async function handlePlay(row: number, col: number) {
@@ -85,8 +81,6 @@ export default function Home() {
 
     const nextPlayer = currentPlayer === playerOne ? playerTwo : playerOne
     setCurrentPlayer(nextPlayer)
-
-    await updateFunds()
   }
   return (
     <main
@@ -104,7 +98,6 @@ export default function Home() {
               const signature = await gameWeb3.fundAccount(playerOne.publicKey)
               await gameLuzid.labelTransaction(signature, 'Fund Player One')
 
-              await updateFunds()
               toast('Player Funded')
             }}
           >
@@ -117,7 +110,6 @@ export default function Home() {
                 signature,
                 `Create Game: ${gameKeypair.publicKey.toString()}`
               )
-              await updateFunds()
 
               toast('Game Created')
             }}
@@ -150,8 +142,6 @@ export default function Home() {
               const snapshotId = await gameLuzid.restoreLastUpdatedSnapshot()
               console.log('Restored Snapshot:', snapshotId)
 
-              await updateFunds()
-
               toast('Snapshot Restored')
             }}
           >
@@ -167,9 +157,6 @@ export default function Home() {
                   ...gameState,
                   ...O_WINNING,
                 } as unknown as GameState)
-              }
-              {
-                await updateFunds()
               }
 
               toast('Game State Updated')
